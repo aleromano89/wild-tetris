@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { submitScore } from '../api/scores';
+import { apiErrorMessage } from '../i18n/apiError';
 
 export const NAME_MAX = 20;
 export const NAME_STORAGE_KEY = 'blocchi.playerName';
@@ -25,6 +27,7 @@ const saveName = (name) => {
  * status: 'idle' | 'sending' | 'saved'
  */
 export default function SaveScoreForm({ score, lines, level }) {
+  const intl = useIntl();
   const [name, setName] = useState(loadName);
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
@@ -42,7 +45,7 @@ export default function SaveScoreForm({ score, lines, level }) {
       saveName(trimmed);
       setStatus('saved');
     } catch (err) {
-      setError(err.errors?.player_name ?? err.message ?? 'Salvataggio non riuscito');
+      setError(err.errors?.player_name ?? apiErrorMessage(intl, err, 'save.failed'));
       setStatus('idle');
     }
   };
@@ -50,9 +53,11 @@ export default function SaveScoreForm({ score, lines, level }) {
   if (status === 'saved') {
     return (
       <div className="save-score save-score--saved">
-        <p className="save-score__ok">Punteggio salvato!</p>
+        <p className="save-score__ok">
+          <FormattedMessage id="save.saved" />
+        </p>
         <a className="btn btn--primary save-score__link" href="/score.html">
-          Vedi classifica
+          <FormattedMessage id="save.viewLeaderboard" />
         </a>
       </div>
     );
@@ -61,7 +66,7 @@ export default function SaveScoreForm({ score, lines, level }) {
   return (
     <form className="save-score" onSubmit={onSubmit}>
       <label className="save-score__label" htmlFor="player-name">
-        Il tuo nome
+        <FormattedMessage id="save.name" />
       </label>
       <div className="save-score__row">
         <input
@@ -79,7 +84,7 @@ export default function SaveScoreForm({ score, lines, level }) {
           aria-describedby={error ? 'player-name-error' : undefined}
         />
         <button type="submit" className="btn btn--primary" disabled={!trimmed || sending}>
-          {sending ? 'Salvo…' : 'Salva'}
+          <FormattedMessage id={sending ? 'save.sending' : 'save.submit'} />
         </button>
       </div>
       {error && (

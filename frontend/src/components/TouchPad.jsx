@@ -8,27 +8,29 @@
  * Non si usa event.detail: dopo un tocco alcuni browser generano il click con detail 0.
  */
 import { useRef } from 'react';
+import { useIntl } from 'react-intl';
 
 const MOVE = [
-  { action: 'left', label: 'Sposta a sinistra', icon: '←' },
-  { action: 'softDrop', label: 'Scendi', icon: '↓' },
-  { action: 'right', label: 'Sposta a destra', icon: '→' },
+  { action: 'left', label: 'pad.left', icon: '←' },
+  { action: 'softDrop', label: 'pad.softDrop', icon: '↓' },
+  { action: 'right', label: 'pad.right', icon: '→' },
 ];
 const ACT = [
-  { action: 'rotateCw', label: 'Ruota', icon: '↻' },
-  { action: 'hardDrop', label: 'Caduta istantanea', icon: '⤓' },
+  { action: 'rotateCw', label: 'pad.rotate', icon: '↻' },
+  { action: 'hardDrop', label: 'pad.hardDrop', icon: '⤓' },
 ];
 
 export default function TouchPad({ disabled, onAction }) {
   // pulsante su cui è appena avvenuto un pointerdown: il suo prossimo click va ignorato
   const pressed = useRef(null);
+  const intl = useIntl();
 
   const button = ({ action, label, icon }) => (
     <button
       key={action}
       type="button"
       className={`pad__btn pad__btn--${action}`}
-      aria-label={label}
+      aria-label={intl.formatMessage({ id: label })}
       disabled={disabled}
       onPointerDown={(e) => {
         e.preventDefault(); // niente focus/selezione al tocco
@@ -49,7 +51,7 @@ export default function TouchPad({ disabled, onAction }) {
   );
 
   return (
-    <div className="pad" role="group" aria-label="Comandi di gioco">
+    <div className="pad" role="group" aria-label={intl.formatMessage({ id: 'pad.label' })}>
       <div className="pad__cluster">{MOVE.map(button)}</div>
       <div className="pad__cluster">{ACT.map(button)}</div>
     </div>

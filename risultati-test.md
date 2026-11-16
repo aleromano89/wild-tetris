@@ -2,6 +2,32 @@
 
 Registro delle esecuzioni dei test. Direttive principali: [CLAUDE.md](CLAUDE.md).
 
+## 2026-11-16 — Testi dell'interfaccia con react-intl
+
+### Unit / componenti (Vitest) — `docker compose exec node npm test`
+
+| File | Test | Esito |
+|------|------|-------|
+| test esistenti (19 file, ora con `src/test/intl.jsx`) | 134 | ✅ |
+| `src/i18n/messages.test.js` | 4 | ✅ (nuovo) |
+| `src/components/App.i18n.test.jsx` | 5 | ✅ (nuovo) |
+| **Totale** | **143** | **143 passati** |
+
+Ciclo TDD: nuovi test e helper eseguiti in rosso (moduli `i18n/index` e `I18nProvider` assenti: 9 file falliti), poi verdi.
+
+Prima della modifica, con `react-intl` non installato e `FormattedText` (inesistente) in `App.jsx`, la build falliva e 6 file di test non partivano.
+
+### Build — `docker compose exec node npm run build`
+
+Build riuscita; `main.html` e `score.html` rispondono 200.
+
+### Browser (Playwright) — `make e2e`
+
+| File | Desktop | Mobile |
+|------|---------|--------|
+| tutti i file `e2e/*.spec.js` (invariati) | ✅ | ✅ |
+| **Totale** | | **51 passati** (2 esecuzioni consecutive) |
+
 ## 2026-11-16 — Frontend mobile: pulsantiera e barra statistiche
 
 ### Unit / componenti (Vitest) — `docker compose exec node npm test`

@@ -1,19 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { fetchTopScores } from '../api/scores';
+import { apiErrorMessage } from '../i18n/apiError';
 import { formatDate, formatNumber } from '../score/format';
 import { GAME_TITLE } from '../meta';
 
 /** Pagina classifica: solo visualizzazione della top 10 (GET /api/scores.php). */
 export default function ScorePage() {
-  // state: { status: 'loading' | 'ready' | 'error', rows, error }
-  const [state, setState] = useState({ status: 'loading', rows: [], error: '' });
+  const intl = useIntl();
+  // state: { status: 'loading' | 'ready' | 'error', rows, error } (error: l'errore ricevuto)
+  const [state, setState] = useState({ status: 'loading', rows: [], error: null });
 
   const load = useCallback(() => {
     let active = true;
-    setState({ status: 'loading', rows: [], error: '' });
+    setState({ status: 'loading', rows: [], error: null });
     fetchTopScores()
-      .then((rows) => active && setState({ status: 'ready', rows, error: '' }))
-      .catch((err) => active && setState({ status: 'error', rows: [], error: err.message }));
+      .then((rows) => active && setState({ status: 'ready', rows, error: null }))
+      .catch((err) => active && setState({ status: 'error', rows: [], error: err }));
     return () => {
       active = false;
     };
@@ -24,51 +27,63 @@ export default function ScorePage() {
   return (
     <div className="page">
       <header className="topbar">
-        <h1 className="topbar__title">{GAME_TITLE} · Classifica</h1>
+        <h1 className="topbar__title">
+          <FormattedMessage id="score.title" values={{ title: GAME_TITLE }} />
+        </h1>
         <a className="topbar__link" href="/">
-          Torna al gioco
+          <FormattedMessage id="nav.backToGame" />
         </a>
       </header>
 
       <main className="board-page">
         <section className="leaderboard">
-          {state.status === 'loading' && <p className="leaderboard__msg">Caricamento della classifica…</p>}
+          {state.status === 'loading' && <p className="leaderboard__msg">
+              <FormattedMessage id="score.loading" />
+            </p>}
 
           {state.status === 'error' && (
             <div className="leaderboard__msg" role="alert">
-              <p>Impossibile caricare la classifica: {state.error}</p>
+              <p>
+                <FormattedMessage id="score.loadError" values={{ error: apiErrorMessage(intl, state.error) }} />
+              </p>
               <button type="button" className="btn" onClick={load}>
-                Riprova
+                <FormattedMessage id="score.retry" />
               </button>
             </div>
           )}
 
           {state.status === 'ready' && state.rows.length === 0 && (
             <div className="leaderboard__msg">
-              <p>Nessun punteggio ancora registrato.</p>
+              <p>
+                <FormattedMessage id="score.empty" />
+              </p>
               <a className="btn btn--primary" href="/">
-                Gioca la prima partita
+                <FormattedMessage id="score.playFirst" />
               </a>
             </div>
           )}
 
           {state.status === 'ready' && state.rows.length > 0 && (
             <table className="leaderboard__table">
-              <caption className="leaderboard__caption">Top 10</caption>
+              <caption className="leaderboard__caption">
+                <FormattedMessage id="score.caption" />
+              </caption>
               <thead>
                 <tr>
                   <th scope="col" className="col-rank">
                     #
                   </th>
-                  <th scope="col">Giocatore</th>
+                  <th scope="col">
+                    <FormattedMessage id="score.col.player" />
+                  </th>
                   <th scope="col" className="col-num">
-                    Punti
+                    <FormattedMessage id="score.col.points" />
                   </th>
                   <th scope="col" className="col-num col-extra">
-                    Righe
+                    <FormattedMessage id="score.col.lines" />
                   </th>
                   <th scope="col" className="col-num col-extra">
-                    Livello
+                    <FormattedMessage id="score.col.level" />
                   </th>
                 </tr>
               </thead>

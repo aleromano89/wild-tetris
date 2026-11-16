@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '../test/intl';
 import { DROP_INTERVAL_MS } from '../game/config';
 
 // Fase 1.3: a fine partita compare il modulo per salvare il punteggio.
