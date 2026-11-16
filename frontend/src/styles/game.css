@@ -264,12 +264,122 @@ kbd {
   border-radius: 5px;
 }
 
+/* ---------- Mobile: barra statistiche e pulsantiera ---------- */
+
+/* su desktop non servono: statistiche nel pannello laterale, comandi da tastiera */
+.statsbar,
+.pad {
+  display: none;
+}
+
+.stats--bar {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.stats--bar .stats__item {
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stats--bar .stats__item + .stats__item {
+  border-left: 1px solid var(--border);
+}
+
+.stats--bar .stats__label {
+  font-size: 0.65rem;
+}
+
+.stats--bar .stats__value {
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
+.pad__cluster {
+  display: flex;
+  gap: 8px;
+}
+
+.pad__btn {
+  flex: 0 1 56px;
+  min-width: 44px;
+  height: 56px;
+  padding: 0;
+  font: inherit;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  /* niente zoom con doppio tocco, selezione testo o flash al tocco */
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.08s, background 0.12s, opacity 0.15s;
+}
+
+.pad__btn:active:not(:disabled) {
+  transform: scale(0.94);
+  background: var(--border);
+}
+
+.pad__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pad__btn--rotateCw {
+  color: var(--accent-2);
+}
+
+.pad__btn--hardDrop {
+  color: var(--accent);
+}
+
 /* ---------- Schermi stretti ---------- */
 
 @media (max-width: 640px) {
+  .page .topbar {
+    padding-bottom: 12px;
+  }
+
+  .statsbar {
+    display: block;
+    margin-bottom: 10px;
+    padding: 6px 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
   .game {
     flex-direction: column;
     align-items: center;
+    gap: 12px;
+  }
+
+  /* griglia limitata anche in altezza: con barra e pulsantiera deve stare tutta nello schermo.
+     280px = spazio occupato da intestazione, barra statistiche, pulsantiera, margini e bordi griglia */
+  .grid--board {
+    --cell: min(30px, calc((100vw - 64px) / 10 - 2px), calc((100dvh - 280px) / 20));
+  }
+
+  .pad {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  /* le statistiche sono nella barra in alto */
+  .card--stats {
+    display: none;
   }
 
   .game__side {

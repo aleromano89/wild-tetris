@@ -42,8 +42,14 @@ test.describe('Layout pagina di gioco (browser)', () => {
     await expect(preview).toBeVisible();
     await expect(preview.getByRole('gridcell')).toHaveCount(16);
 
-    await expect(sidebar.getByTestId('stat-punteggio')).toBeVisible();
     await expect(sidebar.getByRole('button', { name: 'Avvia' })).toBeVisible();
+    // statistiche: nel pannello su desktop, nella barra compatta in alto su mobile (vedi mobile.spec.js)
+    if (testInfo.project.name === 'desktop') {
+      await expect(sidebar.getByTestId('stat-punteggio')).toBeVisible();
+    } else {
+      await expect(sidebar.getByTestId('stat-punteggio')).toBeHidden();
+      await expect(page.getByTestId('bar-punteggio')).toBeVisible();
+    }
 
     const previewBox = await preview.boundingBox();
     expect(previewBox.width).toBeGreaterThan(40);

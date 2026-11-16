@@ -2,6 +2,41 @@
 
 Registro delle esecuzioni dei test. Direttive principali: [CLAUDE.md](CLAUDE.md).
 
+## 2026-11-16 — Frontend mobile: pulsantiera e barra statistiche
+
+### Unit / componenti (Vitest) — `docker compose exec node npm test`
+
+| File | Test | Esito |
+|------|------|-------|
+| `src/game/*.test.js` (9 file) | 74 | ✅ |
+| `src/components/App*.test.jsx` (esistenti, 5 file) | 30 | ✅ |
+| `src/api/scores.test.js`, `src/score/format.test.js` | 8 | ✅ |
+| `src/components/SaveScoreForm.test.jsx`, `ScorePage.test.jsx` | 12 | ✅ |
+| `src/components/App.touch.test.jsx` | 10 | ✅ (nuovo) |
+| **Totale** | **134** | **134 passati** |
+
+Ciclo TDD: `App.touch.test.jsx` eseguito in rosso (9 falliti, componenti assenti), poi verde. Il test «un tocco esegue l'azione una sola volta anche se il click che segue ha detail 0» è stato aggiunto dopo il bug trovato da Playwright (vedi sotto), eseguito in rosso e poi verde con la correzione.
+
+### Browser (Playwright) — `make e2e`
+
+| File | Desktop | Mobile |
+|------|---------|--------|
+| `e2e/layout.spec.js` (3 test, aggiornato) | ✅ | ✅ |
+| `e2e/falling.spec.js` (2 test) | ✅ | ✅ |
+| `e2e/keys.spec.js` (3 test) | ✅ | ✅ |
+| `e2e/gameover.spec.js` (1 test) | ✅ | ✅ |
+| `e2e/score.spec.js` (4 test) | ✅ | ✅ |
+| `e2e/api.spec.js` (21 test) | ✅ | — (saltato) |
+| `e2e/mobile.spec.js` (nuovo: 1 test desktop, 3 test mobile) | ✅ | ✅ |
+| **Totale** | | **51 passati** (2 esecuzioni consecutive) |
+
+`mobile.spec.js`: a partita avviata e pagina in cima, con viewport 375×553 (iPhone SE) e 393×659 (iPhone 15 Pro), angoli e ultima riga della griglia, barra statistiche e 5 pulsanti sono dentro lo schermo e non coperti (`elementFromPoint`), pulsanti ≥ 44×44, niente scroll orizzontale; i tocchi (`tap`) muovono, ruotano e fanno cadere il pezzo, il punteggio nella barra si aggiorna e la pagina non scorre. Su desktop barra e pulsantiera sono nascoste.
+
+Note:
+- primo run: falliti `mobile.spec.js` (atteso: la pulsantiera era ancora assente) e `layout.spec.js` su mobile (atteso: cercava il punteggio nel pannello laterale, ora nella barra; test aggiornato);
+- bug trovato: con il tocco simulato il click successivo al `pointerdown` arriva con `detail` 0 e veniva scambiato per un'attivazione da tastiera, quindi il pezzo si spostava due volte. Corretto ignorando il click che segue un `pointerdown` sullo stesso pulsante.
+- controllo visivo con screenshot WebKit (iPhone 15 Pro e iPhone SE): la pulsantiera finisce a 634/659px e 528/553px.
+
 ## 2026-11-14 — Fase 1.3 salvataggio punteggio e classifica
 
 ### Unit / componenti (Vitest) — `docker compose exec node npm test`

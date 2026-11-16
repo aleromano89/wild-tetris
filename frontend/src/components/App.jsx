@@ -6,6 +6,7 @@ import Grid from './Grid';
 import StatsPanel from './StatsPanel';
 import Controls from './Controls';
 import SaveScoreForm from './SaveScoreForm';
+import TouchPad from './TouchPad';
 import useFallingGame from './useFallingGame';
 
 const KEYS = [
@@ -18,7 +19,8 @@ const KEYS = [
 ];
 
 export default function App() {
-  const { status, game, start, togglePause } = useFallingGame();
+  const { status, game, start, togglePause, control } = useFallingGame();
+  const stats = { score: game?.score ?? 0, lines: game?.lines ?? 0, level: game?.level ?? 1 };
 
   const board = useMemo(() => (game ? getVisibleBoard(game) : createEmptyBoard()), [game]);
   const preview = useMemo(() => getPreview(game?.next ?? null), [game]);
@@ -29,6 +31,11 @@ export default function App() {
         <h1 className="topbar__title">{GAME_TITLE}</h1>
         <a className="topbar__link" href="/score.html">Classifica</a>
       </header>
+
+      {/* solo mobile (game.css): statistiche su una riga sopra la griglia */}
+      <section className="statsbar" aria-label="Statistiche partita">
+        <StatsPanel {...stats} variant="bar" />
+      </section>
 
       <main className="game">
         <section className="game__board">
@@ -43,14 +50,17 @@ export default function App() {
           )}
         </section>
 
+        {/* solo mobile (game.css): sostituisce le frecce da tastiera */}
+        <TouchPad disabled={status !== 'running'} onAction={control} />
+
         <aside className="game__side" aria-label="Pannello di gioco">
           <div className="card">
             <h2 className="card__title">Prossimo</h2>
             <Grid cells={preview} label="Prossimo pezzo" className="grid--preview" />
           </div>
 
-          <div className="card">
-            <StatsPanel score={game?.score ?? 0} lines={game?.lines ?? 0} level={game?.level ?? 1} />
+          <div className="card card--stats">
+            <StatsPanel {...stats} />
           </div>
 
           <Controls status={status} onStart={start} onTogglePause={togglePause} />

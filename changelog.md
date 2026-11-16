@@ -1,10 +1,16 @@
 # Changelog
 
 Registro delle feature e modifiche del progetto. Direttive principali: [CLAUDE.md](CLAUDE.md).
-zz
 
 
-test
+## 2026-11-16 — Frontend mobile: pulsantiera e barra statistiche
+
+- **Aggiunto** `TouchPad`: pulsantiera di gioco sotto la griglia, solo su schermi fino a 640px. Sinistra, giù e destra a sinistra; ruota (orario) e caduta istantanea a destra. Tasti 56px (minimo 44px), attivi solo a partita in corso. L'azione parte al tocco (`pointerdown`); il click che segue viene ignorato, mentre Invio/Spazio sul pulsante funzionano. Niente zoom con doppio tocco né selezione del testo.
+- **Aggiunto** barra statistiche compatta sopra la griglia su mobile (punteggio, righe, livello su una riga): `StatsPanel` con `variant="bar"` e test id `bar-*`.
+- **Modificato** layout mobile: la card statistiche del pannello laterale è nascosta; la griglia è limitata anche in altezza (`dvh`) così che barra, griglia e pulsantiera stiano nello schermo senza scroll a partita avviata (da 375×553).
+- **Modificato** `useFallingGame`: espone `control(type)` per i comandi della pulsantiera.
+- **Modificato** `CLAUDE.md`: sezione «frontend mobile» con le direttive per la versione mobile.
+- **Aggiunto** test Vitest `App.touch.test.jsx` e test browser `e2e/mobile.spec.js`; aggiornato `e2e/layout.spec.js` (su mobile il punteggio è nella barra in alto).
 
 
 ## 2026-11-14 — Fase 1.3 salvataggio punteggio e classifica

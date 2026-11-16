@@ -82,5 +82,9 @@ export default function useFallingGame() {
     game: state.game,
     start: () => dispatch({ type: 'start' }),
     togglePause: () => dispatch({ type: 'togglePause' }),
+    /** Comando di gioco dalla pulsantiera touch: 'left' | 'right' | 'softDrop' | 'hardDrop' | 'rotateCw'. */
+    control: (type) => {
+      if (type !== 'tick' && GAME_ACTIONS[type]) dispatch({ type });
+    },
   };
 }
