@@ -1,0 +1,12 @@
+!changelog.md
+
+
+.env
+/backend/vendor/
+/frontend/node_modules/
+/frontend/dist/
+/frontend/e2e/.results/
+
+.idea/
+*.md
+!changelog.md
