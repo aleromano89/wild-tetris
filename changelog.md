@@ -1,6 +1,11 @@
 # Changelog
 
 Registro delle feature e modifiche del progetto. Direttive principali: [CLAUDE.md](CLAUDE.md).
+zz
+
+
+test
+
 
 ## 2026-11-14 — Fase 1.3 salvataggio punteggio e classifica
 
