@@ -12,6 +12,8 @@
   "stats.score": "Punteggio",
   "stats.lines": "Righe",
   "stats.level": "Livello",
+  "app.config.special_effect": "effetti speciali",
+  "app.config.color": "colori",
   "controls.start": "Avvia",
   "controls.pause": "Pausa",
   "controls.resume": "Riprendi",

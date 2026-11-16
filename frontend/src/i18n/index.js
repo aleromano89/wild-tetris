@@ -9,4 +9,4 @@ export const MESSAGES = {
 };
 
 /** Lingua dell'app: italiano (CLAUDE.md). Per provare un'altra lingua cambiare qui, es. 'es'. */
-export const LOCALE = 'es';
+export const LOCALE = 'it';

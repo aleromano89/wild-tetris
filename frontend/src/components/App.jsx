@@ -44,6 +44,17 @@ export default function App() {
       </section>
 
       <main className="game">
+
+        <section className="config">
+            <button className="color">
+              <FormattedMessage id="app.config.color" />
+            </button>
+            <button className="special-effect">
+              <FormattedMessage id="app.config.special_effect" />
+            </button>
+        </section>
+
+
         <section className="game__board">
           <Grid cells={board} label={t('game.board.label')} className="grid--board" />
           {status === 'idle' && (

@@ -45,6 +45,12 @@ body {
   padding: 8px 0 24px;
 }
 
+.config {
+  /* sezione config da sviluppare in fase evolutive   */
+  display: none;
+}
+
+
 .topbar__title {
   margin: 0;
   font-size: 1.75rem;
