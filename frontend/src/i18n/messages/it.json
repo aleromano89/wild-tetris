@@ -14,8 +14,7 @@
   "stats.score": "Punteggio",
   "stats.lines": "Righe",
   "stats.level": "Livello",
-  "app.config.specialEffect": "effetti speciali",
-  "app.config.color": "colori",
+  "stats.time": "Tempo",
   "controls.start": "Avvia",
   "controls.pause": "Pausa",
   "controls.resume": "Riprendi",
@@ -52,5 +51,13 @@
   "score.col.lines": "Righe",
   "score.col.level": "Livello",
   "error.network": "Server non raggiungibile",
-  "error.server": "Errore del server ({status})"
+  "error.server": "Errore del server ({status})",
+  "locale.name": "Italiano",
+  "locale.code": "IT",
+  "locale.switch": "Passa a {language}",
+  "bricks.title": "Stile mattoni",
+  "bricks.classic": "Classico",
+  "bricks.ice": "Cubi di ghiaccio",
+  "bricks.wood": "Legno",
+  "bricks.lava": "Lava incandescente"
 }

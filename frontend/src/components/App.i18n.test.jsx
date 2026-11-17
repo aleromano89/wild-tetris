@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen, within } from '../test/intl';
 import App from './App';
 import ScorePage from './ScorePage';
 import SaveScoreForm from './SaveScoreForm';
+import { GAME_TITLE } from '../meta';
 
 // Tutte le etichette passano da react-intl: renderizzando in spagnolo non resta testo italiano.
 describe('etichette tradotte (react-intl)', () => {
@@ -71,7 +72,7 @@ describe('etichette tradotte (react-intl)', () => {
       new Response('[]', { status: 200, headers: { 'Content-Type': 'application/json' } })
     );
     render(<ScorePage />, { locale: 'es' });
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Blocchi · Clasificación');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(`${GAME_TITLE} · Clasificación`);
     expect(screen.getByRole('link', { name: 'Volver al juego' })).toBeInTheDocument();
     expect(await screen.findByText('Todavía no hay puntuaciones registradas.')).toBeInTheDocument();
     await act(async () => {});

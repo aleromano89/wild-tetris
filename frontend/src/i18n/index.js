@@ -8,5 +8,5 @@ export const MESSAGES = {
   es: esMessages,
 };
 
-/** Lingua dell'app: italiano (direttive di progetto). Per provare un'altra lingua cambiare qui, es. 'es'. */
+/** Lingua predefinita dell'app: italiano (direttive di progetto). Il giocatore può cambiarla con il pulsante in alto (LocaleSwitch). */
 export const LOCALE = 'it';

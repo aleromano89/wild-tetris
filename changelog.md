@@ -3,6 +3,19 @@
 Registro delle feature e modifiche del progetto.
 
 
+## 2026-11-17 — Scelta dello stile dei mattoni
+
+- **Aggiunto** riquadro «Stile mattoni» nel pannello di gioco con stili classico (quello di prima, predefinito), cubi di ghiaccio e legno. La scelta resta salvata nel browser; durante la partita è bloccata, in pausa si può cambiare.
+- **Modificato** cubi di ghiaccio in scala di grigi (toni medi), con un grigio diverso per pezzo.
+- **Aggiunto** stile «Lava incandescente»: roccia dal grigio scuro al nero con crepe di lava luminose; opzioni dello stile su due colonne.
+- **Rimosso** pulsanti segnaposto «colori» / «effetti speciali» della sezione configurazione nascosta.
+- **Corretto** test della classifica in spagnolo che si aspettava ancora il vecchio nome del gioco.
+
+## 2026-11-17 — Contatore tempo e cambio lingua
+
+- **Aggiunto** contatore del tempo di gioco (fermo in pausa e a fine partita) nel pannello statistiche e nella barra mobile.
+- **Aggiunto** pulsante in alto per passare da italiano a spagnolo e viceversa, su gioco e classifica; la scelta resta salvata nel browser.
+
 ## 2026-11-17 — Frontend mobile: Avvia, Pausa, anteprima e tastiera
 
 - **Aggiunto** su mobile pulsante «Inizia partita» al centro della griglia e icona Pausa / Riprendi nella barra in alto durante la partita.

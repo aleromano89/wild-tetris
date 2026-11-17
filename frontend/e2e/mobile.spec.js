@@ -5,7 +5,7 @@ import { expect, test } from '@playwright/test';
 // e grande (iPhone 15 Pro, 393×659). Si usa il browser del progetto "mobile" (touch attivo).
 const DROP_INTERVAL_MS = 800;
 const PAD_BUTTONS = ['Sposta a sinistra', 'Scendi', 'Sposta a destra', 'Ruota', 'Caduta istantanea'];
-const BAR_STATS = ['bar-punteggio', 'bar-righe', 'bar-livello'];
+const BAR_STATS = ['bar-punteggio', 'bar-righe', 'bar-livello', 'bar-tempo'];
 
 const board = (page) => page.getByRole('grid', { name: 'Campo di gioco' });
 const pad = (page) => page.getByRole('group', { name: 'Comandi di gioco' });

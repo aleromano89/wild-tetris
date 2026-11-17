@@ -1,13 +1,17 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { createGame, hardDrop, move, rotate, softDrop, tick } from '../game/engine';
 import { dropInterval } from '../game/levels';
+import { createTimer, elapsedMs, startTimer, stopTimer } from '../game/timer';
+
+/** Ogni quanto si aggiorna il tempo mostrato (ms). */
+const CLOCK_REFRESH_MS = 250;
 
 /**
  * Stato della partita lato React.
  * status: 'idle' | 'running' | 'paused' | 'over'
  * I comandi da tastiera seguono la tabella di regole-gioco.md.
  */
-const initial = { status: 'idle', game: null };
+const initial = { status: 'idle', game: null, timer: createTimer() };
 
 /** Azioni che modificano il pezzo: attive solo a partita in corso. */
 const GAME_ACTIONS = {
@@ -36,23 +40,27 @@ const KEY_ACTIONS = {
 function reducer(state, action) {
   switch (action.type) {
     case 'start':
-      return { status: 'running', game: createGame() };
+      return { status: 'running', game: createGame(), timer: startTimer(createTimer(), action.now) };
     case 'togglePause':
-      if (state.status === 'running') return { ...state, status: 'paused' };
-      if (state.status === 'paused') return { ...state, status: 'running' };
+      if (state.status === 'running') return { ...state, status: 'paused', timer: stopTimer(state.timer, action.now) };
+      if (state.status === 'paused') return { ...state, status: 'running', timer: startTimer(state.timer, action.now) };
       return state;
     default: {
       const apply = GAME_ACTIONS[action.type];
       if (!apply || state.status !== 'running') return state;
       const game = apply(state.game);
       if (game === state.game) return state;
-      return { status: game.status === 'over' ? 'over' : 'running', game };
+      if (game.status === 'over') return { status: 'over', game, timer: stopTimer(state.timer, action.now) };
+      return { ...state, game };
     }
   }
 }
 
 export default function useFallingGame() {
-  const [state, dispatch] = useReducer(reducer, initial);
+  const [state, dispatchRaw] = useReducer(reducer, initial);
+  // ogni azione porta l'istante corrente, usato dal timer (il reducer resta puro)
+  const dispatch = (action) => dispatchRaw({ ...action, now: Date.now() });
+  const [now, setNow] = useState(() => Date.now());
   const { status } = state;
   const level = state.game?.level ?? 1;
 
@@ -62,6 +70,14 @@ export default function useFallingGame() {
     const id = setInterval(() => dispatch({ type: 'tick' }), dropInterval(level));
     return () => clearInterval(id);
   }, [status, level]);
+
+  // tempo mostrato: aggiornato periodicamente solo a partita in corso
+  useEffect(() => {
+    setNow(Date.now());
+    if (status !== 'running') return undefined;
+    const id = setInterval(() => setNow(Date.now()), CLOCK_REFRESH_MS);
+    return () => clearInterval(id);
+  }, [status]);
 
   // tastiera: attiva solo durante la partita (anche in pausa, per riprendere)
   useEffect(() => {
@@ -80,6 +96,8 @@ export default function useFallingGame() {
   return {
     status,
     game: state.game,
+    /** Tempo di gioco in ms (fermo in pausa e a fine partita). */
+    elapsed: elapsedMs(state.timer, now),
     start: () => dispatch({ type: 'start' }),
     togglePause: () => dispatch({ type: 'togglePause' }),
     /** Comando di gioco dalla pulsantiera touch: 'left' | 'right' | 'softDrop' | 'hardDrop' | 'rotateCw'. */

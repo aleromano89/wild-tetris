@@ -4,6 +4,7 @@ import { fetchTopScores } from '../api/scores';
 import { apiErrorMessage } from '../i18n/apiError';
 import { formatDate, formatNumber } from '../score/format';
 import { GAME_TITLE } from '../meta';
+import LocaleSwitch from './LocaleSwitch';
 
 /** Pagina classifica: solo visualizzazione della top 10 (GET /api/scores.php). */
 export default function ScorePage() {
@@ -30,6 +31,7 @@ export default function ScorePage() {
         <h1 className="topbar__title">
           <FormattedMessage id="score.title" values={{ title: GAME_TITLE }} />
         </h1>
+        <LocaleSwitch />
         <a className="topbar__link" href="/">
           <FormattedMessage id="nav.backToGame" />
         </a>

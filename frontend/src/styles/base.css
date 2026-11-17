@@ -45,12 +45,6 @@ body {
   padding: 8px 0 24px;
 }
 
-.config {
-  /* sezione config da sviluppare in fase evolutive   */
-  display: none;
-}
-
-
 .topbar__title {
   margin: 0;
   font-size: 1.75rem;
@@ -76,6 +70,37 @@ body {
   white-space: nowrap;
 }
 
+/* titolo a sinistra, pulsanti e link raggruppati a destra */
+.topbar__title {
+  margin-right: auto;
+}
+
+/* pulsante cambio lingua: codice della lingua di destinazione */
+.topbar__locale {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+
+.topbar__locale:hover {
+  background: var(--border);
+}
+
 .topbar__link:hover {
   background: var(--surface-2);
 }
@@ -83,5 +108,13 @@ body {
 @media (max-width: 480px) {
   .topbar__title {
     font-size: 1.3rem;
+  }
+
+  .topbar {
+    gap: 8px;
+  }
+
+  .topbar__link {
+    padding: 8px 12px;
   }
 }

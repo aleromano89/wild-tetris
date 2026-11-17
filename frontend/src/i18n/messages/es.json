@@ -14,6 +14,7 @@
   "stats.score": "Puntuación",
   "stats.lines": "Líneas",
   "stats.level": "Nivel",
+  "stats.time": "Tiempo",
   "controls.start": "Vamos",
   "controls.pause": "Pausa",
   "controls.resume": "Reanudar",
@@ -51,6 +52,12 @@
   "score.col.level": "Nivel",
   "error.network": "Servidor no disponible",
   "error.server": "Error del servidor ({status})",
-  "app.config.specialEffect": "efectos especiales",
-  "app.config.color": "colores"
+  "locale.name": "Español",
+  "locale.code": "ES",
+  "locale.switch": "Cambiar a {language}",
+  "bricks.title": "Estilo de los bloques",
+  "bricks.classic": "Clásico",
+  "bricks.ice": "Cubitos de hielo",
+  "bricks.wood": "Madera",
+  "bricks.lava": "Lava incandescente"
 }

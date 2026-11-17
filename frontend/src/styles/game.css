@@ -295,7 +295,6 @@ kbd {
   justify-content: center;
   width: 44px;
   height: 44px;
-  margin-left: auto;
   padding: 0;
   color: var(--accent);
   background: var(--surface-2);
@@ -312,7 +311,7 @@ kbd {
 }
 
 .stats--bar {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0;
 }
 
@@ -458,3 +457,157 @@ kbd {
 .grid__cell--Z { --piece: #c38bff; }
 .grid__cell--J { --piece: #ff9f5a; }
 .grid__cell--L { --piece: #4fd1d9; }
+
+/* ---------- Stili dei mattoni (scelta nel pannello «Stile mattoni») ----------
+   Classico: la regola sopra (gradiente lucido con alone), usata anche come base.
+   Gli altri stili la sostituiscono tramite la classe bricks--<stile> sulla griglia. */
+
+/* Cubi di ghiaccio: solo scala di grigi, toni medi (non troppo chiari); riflesso in alto a sinistra.
+   Ogni pezzo ha un grigio di intensità diversa per restare distinguibile. */
+.bricks--ice .grid__cell[data-filled='true'] {
+  border-radius: 5px;
+  background-color: var(--ice-gray);
+  background-image:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0 10%, rgba(255, 255, 255, 0) 32%),
+    linear-gradient(315deg, rgba(255, 255, 255, 0.25) 0 8%, rgba(255, 255, 255, 0) 22%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.14), rgba(0, 0, 0, 0.2));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(200, 200, 200, 0.25);
+}
+
+.bricks--ice .grid__cell--I { --ice-gray: #a8a8a8; }
+.bricks--ice .grid__cell--O { --ice-gray: #8c8c8c; }
+.bricks--ice .grid__cell--T { --ice-gray: #b4b4b4; }
+.bricks--ice .grid__cell--S { --ice-gray: #7a7a7a; }
+.bricks--ice .grid__cell--Z { --ice-gray: #9a9a9a; }
+.bricks--ice .grid__cell--J { --ice-gray: #828282; }
+.bricks--ice .grid__cell--L { --ice-gray: #a0a0a0; }
+
+/* Legno: venature, un nodo e bordi smussati; il colore del pezzo fa da mordente sul legno */
+.bricks--wood .grid__cell[data-filled='true'] {
+  --wood: color-mix(in srgb, var(--piece) 40%, #9a6431);
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(
+      100deg,
+      rgba(58, 28, 8, 0) 0 3px,
+      rgba(58, 28, 8, 0.2) 3px 4px,
+      rgba(255, 228, 186, 0.08) 4px 6px
+    ),
+    radial-gradient(ellipse 38% 16% at 30% 68%, rgba(58, 28, 8, 0.4), rgba(58, 28, 8, 0) 70%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--wood) 82%, white),
+      var(--wood) 55%,
+      color-mix(in srgb, var(--wood) 78%, black)
+    );
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 234, 200, 0.35),
+    inset -1px -2px 0 rgba(40, 18, 4, 0.5),
+    0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+/* Lava incandescente: roccia sfumata dal grigio scuro al nero, attraversata da crepe di lava
+   e con bagliore caldo; ogni pezzo ha una tonalità di lava diversa (dal rosso al giallo) */
+.bricks--lava .grid__cell[data-filled='true'] {
+  border-radius: 4px;
+  background-color: #000;
+  background-image:
+    linear-gradient(115deg, transparent 0 37%, var(--lava) 40% 44%, transparent 47%),
+    linear-gradient(35deg, transparent 0 60%, var(--lava) 63% 65%, transparent 68%),
+    radial-gradient(circle at 72% 78%, rgba(255, 120, 30, 0.45), rgba(255, 120, 30, 0) 55%),
+    linear-gradient(160deg, #464646, #1c1c1c 55%, #000);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 140, 40, 0.35),
+    inset 0 -2px 4px rgba(255, 90, 20, 0.35),
+    0 0 8px rgba(255, 90, 20, 0.45);
+}
+
+.bricks--lava .grid__cell--I { --lava: #ff6a1a; }
+.bricks--lava .grid__cell--O { --lava: #ff8c1a; }
+.bricks--lava .grid__cell--T { --lava: #ffb21f; }
+.bricks--lava .grid__cell--S { --lava: #ff4d1a; }
+.bricks--lava .grid__cell--Z { --lava: #ff7a33; }
+.bricks--lava .grid__cell--J { --lava: #ff9e2e; }
+.bricks--lava .grid__cell--L { --lava: #ff5a26; }
+
+/* ---------- Scelta stile mattoni ---------- */
+
+.brick-picker {
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-width: 0;
+}
+
+.brick-picker__options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.brick-picker__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 6px 4px;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.brick-picker__option:hover {
+  background: var(--surface-2);
+}
+
+.brick-picker__option:has(:checked) {
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+
+.brick-picker__option:has(:focus-visible) {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 1px;
+}
+
+.brick-picker:disabled .brick-picker__option {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* radio nascosto alla vista ma raggiungibile da tastiera e lettori di schermo */
+.brick-picker__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.grid--swatch {
+  --cell: 10px;
+  gap: 1px;
+  padding: 3px;
+  border-radius: 6px;
+}
+
+.brick-picker__name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-muted);
+}
+
+.brick-picker__option:has(:checked) .brick-picker__name {
+  color: var(--text);
+}

@@ -1,15 +1,17 @@
 import { FormattedMessage } from 'react-intl';
+import { formatElapsed } from '../game/timer';
 
 /**
- * Punteggio, righe e livello.
+ * Punteggio, righe, livello e tempo di gioco (elapsed in ms).
  * variant "panel": card del pannello laterale (desktop), test id "stat-*".
  * variant "bar": barra compatta su una riga sopra la griglia (mobile), test id "bar-*".
  */
-export default function StatsPanel({ score, lines, level, variant = 'panel' }) {
+export default function StatsPanel({ score, lines, level, elapsed = 0, variant = 'panel' }) {
   const stats = [
-    { key: 'punteggio', label: 'stats.score', value: score },
-    { key: 'righe', label: 'stats.lines', value: lines },
-    { key: 'livello', label: 'stats.level', value: level },
+    { key: 'punteggio', label: 'stats.score', value: score.toLocaleString('it-IT') },
+    { key: 'righe', label: 'stats.lines', value: lines.toLocaleString('it-IT') },
+    { key: 'livello', label: 'stats.level', value: level.toLocaleString('it-IT') },
+    { key: 'tempo', label: 'stats.time', value: formatElapsed(elapsed) },
   ];
   const isBar = variant === 'bar';
 
@@ -21,7 +23,7 @@ export default function StatsPanel({ score, lines, level, variant = 'panel' }) {
             <FormattedMessage id={label} />
           </dt>
           <dd className="stats__value" data-testid={`${isBar ? 'bar' : 'stat'}-${key}`}>
-            {value.toLocaleString('it-IT')}
+            {value}
           </dd>
         </div>
       ))}

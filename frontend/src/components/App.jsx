@@ -1,9 +1,12 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { createEmptyBoard } from '../game/board';
 import { getPreview, getVisibleBoard } from '../game/engine';
 import { GAME_TITLE } from '../meta';
+import { brickClass, loadBrickStyle, saveBrickStyle } from '../theme/brickStyles';
+import BrickStylePicker from './BrickStylePicker';
 import Grid from './Grid';
+import LocaleSwitch from './LocaleSwitch';
 import StatsPanel from './StatsPanel';
 import Controls from './Controls';
 import SaveScoreForm from './SaveScoreForm';
@@ -39,8 +42,14 @@ function PauseIcon({ paused }) {
 export default function App() {
   const intl = useIntl();
   const t = (id) => intl.formatMessage({ id });
-  const { status, game, start, togglePause, control } = useFallingGame();
-  const stats = { score: game?.score ?? 0, lines: game?.lines ?? 0, level: game?.level ?? 1 };
+  const { status, game, elapsed, start, togglePause, control } = useFallingGame();
+  const [brickStyle, setBrickStyle] = useState(loadBrickStyle);
+  const chooseBrickStyle = (style) => {
+    saveBrickStyle(style);
+    setBrickStyle(style);
+  };
+  const bricks = brickClass(brickStyle);
+  const stats = { score: game?.score ?? 0, lines: game?.lines ?? 0, level: game?.level ?? 1, elapsed };
 
   const board = useMemo(() => (game ? getVisibleBoard(game) : createEmptyBoard()), [game]);
   const preview = useMemo(() => getPreview(game?.next ?? null), [game]);
@@ -60,6 +69,7 @@ export default function App() {
             <PauseIcon paused={status === 'paused'} />
           </button>
         )}
+        <LocaleSwitch />
         <a className="topbar__link" href="/score.html">
           <FormattedMessage id="nav.leaderboard" />
         </a>
@@ -72,18 +82,8 @@ export default function App() {
 
       <main className="game">
 
-        <section className="config">
-            <button className="color">
-              <FormattedMessage id="app.config.color" />
-            </button>
-            <button className="special-effect">
-              <FormattedMessage id="app.config.specialEffect" />
-            </button>
-        </section>
-
-
         <section className="game__board">
-          <Grid cells={board} label={t('game.board.label')} className="grid--board" />
+          <Grid cells={board} label={t('game.board.label')} className={`grid--board ${bricks}`} />
           {status === 'idle' && (
             <div className="overlay overlay--start">
               <button type="button" className="btn btn--primary btn--start" onClick={start}>
@@ -114,7 +114,7 @@ export default function App() {
             <h2 className="card__title">
               <FormattedMessage id="game.preview.title" />
             </h2>
-            <Grid cells={preview} label={t('game.preview.label')} className="grid--preview" />
+            <Grid cells={preview} label={t('game.preview.label')} className={`grid--preview ${bricks}`} />
           </div>
 
           <div className="card card--stats">
@@ -122,6 +122,11 @@ export default function App() {
           </div>
 
           <Controls status={status} onStart={start} onTogglePause={togglePause} />
+
+          {/* configurazione: bloccata durante la partita (le frecce muovono il pezzo), modificabile in pausa */}
+          <section className="card config">
+            <BrickStylePicker value={brickStyle} onChange={chooseBrickStyle} disabled={status === 'running'} />
+          </section>
 
           <div className="card card--muted">
             <h2 className="card__title">

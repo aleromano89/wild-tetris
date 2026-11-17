@@ -2,6 +2,53 @@
 
 Registro delle esecuzioni dei test.
 
+## 2026-11-17 — Scelta dello stile dei mattoni
+
+### Unit / componenti (Vitest) — `docker compose exec node npm test`
+
+| File | Test | Esito |
+|------|------|-------|
+| test esistenti | 172 | ✅ (1 corretto: `App.i18n.test.jsx`, titolo del gioco) |
+| `src/theme/brickStyles.test.js` | 6 | ✅ (nuovo, con lo stile lava) |
+| `src/components/BrickStylePicker.test.jsx` | 5 | ✅ (nuovo) |
+| `src/components/App.bricks.test.jsx` | 4 | ✅ (nuovo) |
+| **Totale** | **187** | **187 passati** |
+
+Ciclo TDD: nuovi test eseguiti in rosso (moduli `brickStyles` e `BrickStylePicker` assenti; poi stile `lava` assente, 6 test falliti), poi verdi. Prima della modifica era già rosso `App.i18n.test.jsx` › «pagina classifica in spagnolo» (atteso il vecchio nome «Blocchi»).
+
+### Browser (Playwright) — `make e2e`
+
+| File | Desktop | Mobile |
+|------|---------|--------|
+| `e2e/bricks.spec.js` (nuovo, 1 test: classe CSS per ognuno dei 4 stili, scelta ricordata) | ✅ | ✅ |
+| altri file | ✅ | ✅ |
+| **Totale** | | **66 passati**, 34 saltati |
+
+## 2026-11-17 — Contatore tempo e cambio lingua
+
+### Unit / componenti (Vitest) — `docker compose exec node npm test`
+
+| File | Test | Esito |
+|------|------|-------|
+| test esistenti | 149 | ✅ |
+| `src/game/timer.test.js` | 14 | ✅ (nuovo) |
+| `src/components/App.time.test.jsx` | 4 | ✅ (nuovo) |
+| `src/components/App.locale.test.jsx` | 5 | ✅ (nuovo) |
+| **Totale** | **172** | **172 passati** |
+
+Ciclo TDD: nuovi test eseguiti in rosso (modulo `timer` assente, 9 test falliti), poi verdi.
+
+### Browser (Playwright) — `make e2e`
+
+| File | Desktop | Mobile |
+|------|---------|--------|
+| `e2e/time.spec.js` (nuovo) | ✅ | ✅ |
+| `e2e/locale.spec.js` (nuovo, 1 test solo mobile) | ✅ | ✅ |
+| `e2e/mobile.spec.js` (con `bar-tempo`) e altri file | ✅ | ✅ |
+| **Totale** | | **64 passati**, 34 saltati |
+
+Ciclo TDD: nuovi test e2e eseguiti in rosso (5 falliti), poi verdi.
+
 ## 2026-11-17 — Frontend mobile: Avvia, Pausa, anteprima e tastiera
 
 ### Unit / componenti (Vitest) — `docker compose exec node npm test`
