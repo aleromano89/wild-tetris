@@ -20,6 +20,22 @@ const KEYS = [
   { keyId: 'keys.pauseKeys', action: 'keys.pause' },
 ];
 
+/** Icona pausa (due barre) o ripresa (triangolo). */
+function PauseIcon({ paused }) {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+      {paused ? (
+        <path d="M8 5.5v13l10.5-6.5z" fill="currentColor" />
+      ) : (
+        <>
+          <rect x="6.5" y="5" width="4" height="14" rx="1.2" fill="currentColor" />
+          <rect x="13.5" y="5" width="4" height="14" rx="1.2" fill="currentColor" />
+        </>
+      )}
+    </svg>
+  );
+}
+
 export default function App() {
   const intl = useIntl();
   const t = (id) => intl.formatMessage({ id });
@@ -33,6 +49,17 @@ export default function App() {
     <div className="page">
       <header className="topbar">
         <h1 className="topbar__title">{GAME_TITLE}</h1>
+        {/* solo mobile (game.css): pausa sempre raggiungibile durante la partita */}
+        {(status === 'running' || status === 'paused') && (
+          <button
+            type="button"
+            className="topbar__pause"
+            aria-label={t(status === 'paused' ? 'topbar.resume' : 'topbar.pause')}
+            onClick={togglePause}
+          >
+            <PauseIcon paused={status === 'paused'} />
+          </button>
+        )}
         <a className="topbar__link" href="/score.html">
           <FormattedMessage id="nav.leaderboard" />
         </a>
@@ -50,7 +77,7 @@ export default function App() {
               <FormattedMessage id="app.config.color" />
             </button>
             <button className="special-effect">
-              <FormattedMessage id="app.config.special_effect" />
+              <FormattedMessage id="app.config.specialEffect" />
             </button>
         </section>
 
@@ -58,8 +85,10 @@ export default function App() {
         <section className="game__board">
           <Grid cells={board} label={t('game.board.label')} className="grid--board" />
           {status === 'idle' && (
-            <div className="overlay">
-              <FormattedMessage id="app.btn.start" />
+            <div className="overlay overlay--start">
+              <button type="button" className="btn btn--primary btn--start" onClick={start}>
+                <FormattedMessage id="game.start" />
+              </button>
             </div>
           )}
           {status === 'paused' && (
@@ -81,7 +110,7 @@ export default function App() {
         <TouchPad disabled={status !== 'running'} onAction={control} />
 
         <aside className="game__side" aria-label={t('game.side.label')}>
-          <div className="card">
+          <div className="card card--preview">
             <h2 className="card__title">
               <FormattedMessage id="game.preview.title" />
             </h2>

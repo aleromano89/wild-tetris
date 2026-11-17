@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { submitScore } from '../api/scores';
 import { apiErrorMessage } from '../i18n/apiError';
@@ -14,6 +14,20 @@ const loadName = () => {
     return '';
   }
 };
+/** Spazio lasciato tra il modulo e il bordo superiore della tastiera virtuale. */
+const KEYBOARD_MARGIN = 12;
+
+/**
+ * Se la tastiera virtuale (visual viewport ridotto) copre il modulo, scorre la pagina
+ * quanto basta a riportarlo in vista. Su desktop visualViewport non cambia: nessun effetto.
+ */
+function revealAboveKeyboard(el, vv) {
+  const r = el.getBoundingClientRect();
+  const visibleBottom = vv.offsetTop + vv.height;
+  const overflow = r.bottom + KEYBOARD_MARGIN - visibleBottom;
+  if (overflow > 0) window.scrollBy(0, Math.min(overflow, r.top - vv.offsetTop - KEYBOARD_MARGIN));
+}
+
 const saveName = (name) => {
   try {
     localStorage.setItem(NAME_STORAGE_KEY, name);
@@ -31,6 +45,20 @@ export default function SaveScoreForm({ score, lines, level }) {
   const [name, setName] = useState(loadName);
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
+
+  const formRef = useRef(null);
+
+  // tastiera virtuale: quando si apre (resize del visual viewport) il modulo resta visibile
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return undefined;
+    const onResize = () => {
+      const form = formRef.current;
+      if (form && form.contains(document.activeElement)) revealAboveKeyboard(form, vv);
+    };
+    vv.addEventListener('resize', onResize);
+    return () => vv.removeEventListener('resize', onResize);
+  }, []);
 
   const trimmed = name.trim();
   const sending = status === 'sending';
@@ -64,7 +92,7 @@ export default function SaveScoreForm({ score, lines, level }) {
   }
 
   return (
-    <form className="save-score" onSubmit={onSubmit}>
+    <form className="save-score" onSubmit={onSubmit} ref={formRef}>
       <label className="save-score__label" htmlFor="player-name">
         <FormattedMessage id="save.name" />
       </label>

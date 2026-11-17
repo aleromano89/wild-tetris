@@ -34,8 +34,13 @@ test('fine partita: salva il nome, conferma e porta alla classifica', async ({ p
   expect(await isOnTop(input)).toBe(true);
   const boardBox = await page.getByRole('grid', { name: 'Campo di gioco' }).boundingBox();
   const formBox = await page.locator('.overlay--over').boundingBox();
-  expect(formBox.x).toBeGreaterThanOrEqual(boardBox.x);
-  expect(formBox.x + formBox.width).toBeLessThanOrEqual(boardBox.x + boardBox.width);
+  if (testInfo.project.name === 'mobile') {
+    // su mobile il modulo ha una larghezza propria: centrato sulla griglia (vedi gameover.spec.js)
+    expect(Math.abs(formBox.x + formBox.width / 2 - (boardBox.x + boardBox.width / 2))).toBeLessThan(2);
+  } else {
+    expect(formBox.x).toBeGreaterThanOrEqual(boardBox.x);
+    expect(formBox.x + formBox.width).toBeLessThanOrEqual(boardBox.x + boardBox.width);
+  }
   expect(await noHorizontalScroll(page)).toBeLessThanOrEqual(0);
 
   const name = `e2e-${testInfo.project.name}`;

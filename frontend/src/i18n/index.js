@@ -8,5 +8,5 @@ export const MESSAGES = {
   es: esMessages,
 };
 
-/** Lingua dell'app: italiano (CLAUDE.md). Per provare un'altra lingua cambiare qui, es. 'es'. */
+/** Lingua dell'app: italiano (direttive di progetto). Per provare un'altra lingua cambiare qui, es. 'es'. */
 export const LOCALE = 'it';

@@ -39,34 +39,30 @@ test.describe('Layout pagina di gioco (browser)', () => {
     const preview = sidebar.getByRole('grid', { name: 'Prossimo pezzo' });
 
     await expect(sidebar).toBeVisible();
+    if (testInfo.project.name !== 'desktop') {
+      // su mobile l'anteprima è nascosta (vedi mobile.spec.js)
+      await expect(preview).toBeHidden();
+      await expect(sidebar.getByRole('button', { name: 'Avvia' })).toBeVisible();
+      await expect(sidebar.getByTestId('stat-punteggio')).toBeHidden();
+      await expect(page.getByTestId('bar-punteggio')).toBeVisible();
+      return;
+    }
     await expect(preview).toBeVisible();
     await expect(preview.getByRole('gridcell')).toHaveCount(16);
 
     await expect(sidebar.getByRole('button', { name: 'Avvia' })).toBeVisible();
-    // statistiche: nel pannello su desktop, nella barra compatta in alto su mobile (vedi mobile.spec.js)
-    if (testInfo.project.name === 'desktop') {
-      await expect(sidebar.getByTestId('stat-punteggio')).toBeVisible();
-    } else {
-      await expect(sidebar.getByTestId('stat-punteggio')).toBeHidden();
-      await expect(page.getByTestId('bar-punteggio')).toBeVisible();
-    }
+    await expect(sidebar.getByTestId('stat-punteggio')).toBeVisible();
 
     const previewBox = await preview.boundingBox();
     expect(previewBox.width).toBeGreaterThan(40);
     expect(previewBox.height).toBeGreaterThan(40);
 
-    if (testInfo.project.name === 'desktop') {
-      // su desktop la sidebar sta a destra della griglia, tutto visibile senza scroll
-      await expect(sidebar).toBeInViewport();
-      await expect(preview).toBeInViewport();
-      const boardBox = await page.getByRole('grid', { name: 'Campo di gioco' }).boundingBox();
-      const sidebarBox = await sidebar.boundingBox();
-      expect(sidebarBox.x).toBeGreaterThanOrEqual(boardBox.x + boardBox.width);
-    } else {
-      // su mobile la sidebar va sotto la griglia: raggiungibile scorrendo
-      await preview.scrollIntoViewIfNeeded();
-      await expect(preview).toBeInViewport();
-    }
+    // su desktop la sidebar sta a destra della griglia, tutto visibile senza scroll
+    await expect(sidebar).toBeInViewport();
+    await expect(preview).toBeInViewport();
+    const boardBox = await page.getByRole('grid', { name: 'Campo di gioco' }).boundingBox();
+    const sidebarBox = await sidebar.boundingBox();
+    expect(sidebarBox.x).toBeGreaterThanOrEqual(boardBox.x + boardBox.width);
   });
 
   test('nessuno scroll orizzontale', async ({ page }) => {

@@ -92,3 +92,52 @@ describe('SaveScoreForm - salvataggio punteggio a fine partita', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(/server non raggiungibile/i);
   });
 });
+
+describe('SaveScoreForm - tastiera virtuale (mobile)', () => {
+  // la tastiera riduce il visual viewport: il modulo deve restare visibile sopra la tastiera
+  let viewport;
+  beforeEach(() => {
+    submitScore.mockReset();
+    localStorage.clear();
+    viewport = Object.assign(new EventTarget(), { height: 553, offsetTop: 0 });
+    window.visualViewport = viewport;
+    vi.spyOn(window, 'scrollBy').mockImplementation(() => {});
+  });
+  afterEach(() => {
+    delete window.visualViewport;
+    vi.restoreAllMocks();
+  });
+
+  const placeForm = (top, bottom) => {
+    const form = screen.getByRole('textbox', { name: /nome/i }).closest('form');
+    vi.spyOn(form, 'getBoundingClientRect').mockReturnValue({ top, bottom, left: 0, right: 300, width: 300, height: bottom - top });
+  };
+
+  it('quando la tastiera copre il modulo scorre la pagina quanto basta a mostrarlo', () => {
+    setup();
+    placeForm(250, 380);
+    viewport.height = 300; // tastiera aperta
+    viewport.dispatchEvent(new Event('resize'));
+    expect(window.scrollBy).toHaveBeenCalledWith(0, 380 + 12 - 300);
+  });
+
+  it('non scorre se il modulo è già visibile o se il campo non ha il focus', () => {
+    const { input } = setup();
+    placeForm(100, 230);
+    viewport.height = 300;
+    viewport.dispatchEvent(new Event('resize'));
+    expect(window.scrollBy).not.toHaveBeenCalled();
+
+    placeForm(250, 380);
+    input.blur();
+    viewport.dispatchEvent(new Event('resize'));
+    expect(window.scrollBy).not.toHaveBeenCalled();
+  });
+
+  it('smette di ascoltare il viewport quando il modulo viene rimosso', () => {
+    const { unmount } = render(<SaveScoreForm {...result} />);
+    const remove = vi.spyOn(viewport, 'removeEventListener');
+    unmount();
+    expect(remove).toHaveBeenCalledWith('resize', expect.any(Function));
+  });
+});

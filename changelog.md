@@ -1,19 +1,25 @@
 # Changelog
 
-Registro delle feature e modifiche del progetto. Direttive principali: [CLAUDE.md](CLAUDE.md).
+Registro delle feature e modifiche del progetto.
 
+
+## 2026-11-17 — Frontend mobile: Avvia, Pausa, anteprima e tastiera
+
+- **Aggiunto** su mobile pulsante «Inizia partita» al centro della griglia e icona Pausa / Riprendi nella barra in alto durante la partita.
+- **Modificato** su mobile anteprima del prossimo pezzo nascosta; il modulo di fine partita resta visibile con la tastiera virtuale aperta.
+- **Corretto** traduzioni spagnole mancanti per la sezione configurazione (nascosta).
 
 ## 2026-11-16 — Testi dell'interfaccia con react-intl
 
 - **Aggiunto** `react-intl` e `src/i18n/` (testi in `it.json` / `es.json`, lingua attiva `LOCALE = 'it'`): tutti i testi visibili e le etichette ARIA passano da id; tradotti anche gli errori API generati dal client.
 - **Rimosso** chiavi non usate `app.title` / `app.description`.
-- **Aggiunto** test di coerenza delle traduzioni, test dell'interfaccia in spagnolo e helper di test `src/test/intl.jsx`; convenzione in `CLAUDE.md`.
+- **Aggiunto** test di coerenza delle traduzioni, test dell'interfaccia in spagnolo e helper di test `src/test/intl.jsx`; convenzione aggiunta alle direttive di progetto.
 
 
 ## 2026-11-16 — Frontend mobile: pulsantiera e barra statistiche
 
 - **Aggiunto** su mobile pulsantiera di gioco sotto la griglia (`TouchPad`) e barra statistiche compatta sopra la griglia.
-- **Modificato** layout mobile: griglia adattiva in altezza, tutto in una schermata durante la partita; direttive mobile in `CLAUDE.md`.
+- **Modificato** layout mobile: griglia adattiva in altezza, tutto in una schermata durante la partita; aggiunte le direttive di progetto per il mobile.
 - **Aggiunto** test `App.touch.test.jsx` ed `e2e/mobile.spec.js`.
 
 
@@ -60,4 +66,4 @@ Registro delle feature e modifiche del progetto. Direttive principali: [CLAUDE.m
 ## 2026-11-14
 
 - **Aggiunto** ambiente Docker Compose (nginx, PHP 8.3, MariaDB 11.4, node), tabella `scores` ed endpoint `/api/health.php`.
-- **Modificato** `CLAUDE.md`, `regole-gioco.md` e `todoList.md` con stack, regole e fasi del progetto.
+- **Modificato** direttive di progetto, `regole-gioco.md` e `todoList.md` con stack, regole e fasi del progetto.

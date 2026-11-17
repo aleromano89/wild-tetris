@@ -1,12 +1,14 @@
 {
-  "app.btn.start": "Toca «Vamos» pa' comenzar",
   "nav.leaderboard": "Clasificación",
   "nav.backToGame": "Volver al juego",
+  "topbar.pause": "Poner en pausa",
+  "topbar.resume": "Reanudar la partida",
   "game.board.label": "Campo de juego",
   "game.side.label": "Panel de juego",
   "game.preview.title": "Siguiente",
   "game.preview.label": "Siguiente pieza",
   "game.paused": "En pausa",
+  "game.start": "Empezar partida",
   "game.over": "Partida terminada · {score, number} puntos",
   "game.statsbar.label": "Estadísticas de la partida",
   "stats.score": "Puntuación",
@@ -48,5 +50,7 @@
   "score.col.lines": "Líneas",
   "score.col.level": "Nivel",
   "error.network": "Servidor no disponible",
-  "error.server": "Error del servidor ({status})"
+  "error.server": "Error del servidor ({status})",
+  "app.config.specialEffect": "efectos especiales",
+  "app.config.color": "colores"
 }

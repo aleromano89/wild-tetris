@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 // Versione mobile: pulsantiera di gioco e barra statistiche compatta.
-// Formati da CLAUDE.md: dispositivo piccolo (iPhone SE, area visibile in Safari 375×553)
+// Formati dalle direttive di progetto: dispositivo piccolo (iPhone SE, area visibile in Safari 375×553)
 // e grande (iPhone 15 Pro, 393×659). Si usa il browser del progetto "mobile" (touch attivo).
 const DROP_INTERVAL_MS = 800;
 const PAD_BUTTONS = ['Sposta a sinistra', 'Scendi', 'Sposta a destra', 'Ruota', 'Caduta istantanea'];
@@ -24,10 +24,27 @@ const fullyVisible = (locator) =>
     return inside && !!hit && (hit === el || el.contains(hit));
   });
 
+const overlayStart = (page) => page.getByRole('button', { name: 'Inizia partita' });
+const topPause = (page) => page.getByRole('banner').getByRole('button', { name: /metti in pausa|riprendi la partita/i });
+
+/** Avvia la partita dal pulsante nell'overlay della griglia, senza scorrere la pagina. */
 async function startAtTop(page) {
-  await page.getByRole('button', { name: 'Avvia' }).click();
-  await page.evaluate(() => window.scrollTo(0, 0));
+  await overlayStart(page).tap();
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
 }
+
+/** Caduta istantanea ripetuta fino a fine partita. */
+async function playUntilOver(page) {
+  const over = page.getByText(/partita terminata/i);
+  for (let i = 0; i < 40 && !(await over.count()); i++) await page.keyboard.press('Space');
+  await expect(over).toBeVisible();
+}
+
+const expectTouchTarget = async (locator) => {
+  const box = await locator.boundingBox();
+  expect(box.width).toBeGreaterThanOrEqual(44);
+  expect(box.height).toBeGreaterThanOrEqual(44);
+};
 
 test.describe('Versione mobile (browser)', () => {
   test.beforeEach(async ({ page }, testInfo) => {
@@ -45,6 +62,72 @@ test.describe('Versione mobile (browser)', () => {
     test.describe(nome, () => {
       test.use({ viewport });
 
+      test('in stato iniziale Avvia è nell\'overlay della griglia, visibile senza scroll', async ({ page }) => {
+        await page.goto('/');
+        expect(await fullyVisible(overlayStart(page))).toBe(true);
+        await expectTouchTarget(overlayStart(page));
+        await expect(topPause(page)).toHaveCount(0);
+
+        await startAtTop(page);
+        await expect(overlayStart(page)).toHaveCount(0);
+        await expect(pad(page).getByRole('button', { name: 'Ruota' })).toBeEnabled();
+      });
+
+      test('durante la partita la Pausa è un\'icona nella barra in alto', async ({ page }) => {
+        await page.goto('/');
+        await startAtTop(page);
+
+        expect(await fullyVisible(topPause(page))).toBe(true);
+        await expectTouchTarget(topPause(page));
+        await expect(topPause(page)).toHaveAccessibleName('Metti in pausa');
+
+        await topPause(page).tap();
+        await expect(page.getByText('In pausa')).toBeVisible();
+        await expect(pad(page).getByRole('button', { name: 'Ruota' })).toBeDisabled();
+        expect(await fullyVisible(topPause(page))).toBe(true);
+
+        await topPause(page).tap();
+        await expect(page.getByText('In pausa')).toHaveCount(0);
+        await expect(pad(page).getByRole('button', { name: 'Ruota' })).toBeEnabled();
+        expect(await page.evaluate(() => window.scrollY)).toBe(0);
+      });
+
+      test('anteprima del prossimo pezzo nascosta', async ({ page }) => {
+        await page.goto('/');
+        await startAtTop(page);
+        await expect(page.getByRole('grid', { name: 'Prossimo pezzo' })).toBeHidden();
+      });
+
+      test('a fine partita il modulo del nome resta visibile con la tastiera virtuale aperta', async ({ page }) => {
+        await page.goto('/');
+        await startAtTop(page);
+        await playUntilOver(page);
+
+        const input = page.getByRole('textbox', { name: /nome/i });
+        await expect(input).toBeFocused();
+        const form = page.locator('.save-score');
+        expect(await fullyVisible(input)).toBe(true);
+
+        // tastiera aperta: l'area visibile si riduce di circa 260px
+        await page.setViewportSize({ width: viewport.width, height: viewport.height - 260 });
+        await expect.poll(() => fullyVisible(form)).toBe(true);
+        // campo e pulsante interi, non coperti (es. dalla pulsantiera) e non schiacciati
+        for (const el of [input, page.getByRole('button', { name: 'Salva' })]) {
+          expect(await fullyVisible(el)).toBe(true);
+          expect(await el.evaluate((e) => {
+            const r = e.getBoundingClientRect();
+            const hit = (x) => { const h = document.elementFromPoint(x, r.top + r.height / 2); return !!h && (h === e || e.contains(h)); };
+            return hit(r.left + 4) && hit(r.right - 4);
+          })).toBe(true);
+          await expectTouchTarget(el);
+        }
+        const formBox = await form.boundingBox();
+        expect(formBox.width).toBeGreaterThanOrEqual(240);
+        // la griglia non collassa quando si riduce l'altezza
+        const cell = await board(page).getByRole('gridcell').first().boundingBox();
+        expect(cell.width).toBeGreaterThanOrEqual(12);
+      });
+
       test('durante la partita griglia, statistiche e pulsantiera stanno nello schermo senza scroll', async ({ page }) => {
         await page.goto('/');
         await startAtTop(page);
@@ -60,10 +143,7 @@ test.describe('Versione mobile (browser)', () => {
         for (const name of PAD_BUTTONS) {
           const btn = pad(page).getByRole('button', { name });
           expect(await fullyVisible(btn), name).toBe(true);
-          // area di tocco minima 44×44
-          const box = await btn.boundingBox();
-          expect(box.width).toBeGreaterThanOrEqual(44);
-          expect(box.height).toBeGreaterThanOrEqual(44);
+          await expectTouchTarget(btn); // area di tocco minima 44×44
         }
 
         const overflow = await page.evaluate(
@@ -105,4 +185,10 @@ test('su desktop pulsantiera e barra statistiche compatta sono nascoste', async 
   await expect(pad(page)).toBeHidden();
   await expect(bar(page)).toBeHidden();
   await expect(page.getByTestId('stat-punteggio')).toBeVisible();
+  await expect(page.getByRole('grid', { name: 'Prossimo pezzo' })).toBeVisible();
+
+  // Avvia anche nell'overlay; la pausa resta nel pannello laterale (e P / Esc)
+  await overlayStart(page).click();
+  await expect(page.getByRole('button', { name: 'Pausa', exact: true })).toBeEnabled();
+  await expect(topPause(page)).toBeHidden();
 });

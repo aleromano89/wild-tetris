@@ -1,4 +1,4 @@
-// Client delle API punteggi (backend PHP, vedi CLAUDE.md § API).
+// Client delle API punteggi (backend PHP, vedi direttive di progetto § API).
 
 export const SCORES_URL = '/api/scores.php';
 

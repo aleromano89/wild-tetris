@@ -61,6 +61,23 @@
   background: rgba(18, 20, 31, 0.88);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   pointer-events: none;
+  z-index: 2; /* sopra la pulsantiera quando la griglia si riduce */
+}
+
+/* Stato iniziale: pulsante di avvio al centro della griglia (raggiungibile senza scroll su mobile) */
+.overlay--start {
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+  pointer-events: auto;
+}
+
+.btn--start {
+  min-height: 48px;
+  padding: 12px 22px;
+  font-size: 1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 /* Fine partita: riquadro interattivo con il modulo per salvare il punteggio */
@@ -266,10 +283,32 @@ kbd {
 
 /* ---------- Mobile: barra statistiche e pulsantiera ---------- */
 
-/* su desktop non servono: statistiche nel pannello laterale, comandi da tastiera */
+/* su desktop non servono: statistiche nel pannello laterale, comandi da tastiera e pulsanti laterali */
 .statsbar,
-.pad {
+.pad,
+.topbar__pause {
   display: none;
+}
+
+.topbar__pause {
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  padding: 0;
+  color: var(--accent);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.topbar__pause:active {
+  transform: scale(0.94);
+  background: var(--border);
 }
 
 .stats--bar {
@@ -366,7 +405,19 @@ kbd {
   /* griglia limitata anche in altezza: con barra e pulsantiera deve stare tutta nello schermo.
      280px = spazio occupato da intestazione, barra statistiche, pulsantiera, margini e bordi griglia */
   .grid--board {
-    --cell: min(30px, calc((100vw - 64px) / 10 - 2px), calc((100dvh - 280px) / 20));
+    --cell: max(12px, min(30px, calc((100vw - 64px) / 10 - 2px), calc((100dvh - 280px) / 20)));
+  }
+
+  /* fine partita: il modulo ha una larghezza propria, non dipende dalla griglia
+     (che si riduce se la tastiera virtuale accorcia il viewport) */
+  .overlay--over {
+    width: min(320px, calc(100vw - 32px));
+    max-width: none;
+  }
+
+  .save-score__input,
+  .save-score .btn {
+    min-height: 44px;
   }
 
   .pad {
@@ -377,8 +428,13 @@ kbd {
     max-width: 360px;
   }
 
-  /* le statistiche sono nella barra in alto */
-  .card--stats {
+  .topbar__pause {
+    display: inline-flex;
+  }
+
+  /* statistiche nella barra in alto; anteprima nascosta per lasciare spazio alla griglia */
+  .card--stats,
+  .card--preview {
     display: none;
   }
 

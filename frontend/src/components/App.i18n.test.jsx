@@ -18,7 +18,7 @@ describe('etichette tradotte (react-intl)', () => {
   it('pagina di gioco in spagnolo', () => {
     render(<App />, { locale: 'es' });
 
-    expect(screen.getByText("Toca «Vamos» pa' comenzar")).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Empezar partida' })).toBeInTheDocument();
     expect(screen.getByRole('grid', { name: 'Campo de juego' })).toBeInTheDocument();
     expect(screen.getByRole('grid', { name: 'Siguiente pieza' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Clasificación' })).toBeInTheDocument();

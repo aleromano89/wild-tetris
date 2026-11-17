@@ -26,7 +26,7 @@ function usedIds() {
 }
 
 describe('traduzioni (react-intl)', () => {
-  it('la lingua dell\'app è l\'italiano (CLAUDE.md)', () => {
+  it('la lingua dell\'app è l\'italiano (direttive di progetto)', () => {
     expect(LOCALE).toBe('it');
   });
 

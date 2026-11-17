@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 // Fase 1.2.1: dopo "Avvia" i pezzi scendono da soli, senza controllo del giocatore.
 test.describe('Discesa dei pezzi (browser)', () => {
-  test('dopo Avvia un pezzo colorato compare e scende', async ({ page }) => {
+  test('dopo Avvia un pezzo colorato compare e scende', async ({ page }, testInfo) => {
     await page.goto('/');
     const board = page.getByRole('grid', { name: 'Campo di gioco' });
     const filled = board.locator('[data-filled="true"]');
@@ -25,7 +25,7 @@ test.describe('Discesa dei pezzi (browser)', () => {
 
     // la cella piena è colorata e non coperta da altri elementi
     // (su mobile il click su Avvia, sotto la griglia, fa scorrere la pagina)
-    await page.getByRole('button', { name: 'Pausa' }).click();
+    await page.getByRole('button', { name: 'Pausa', exact: true }).click();
     await filled.first().scrollIntoViewIfNeeded();
     const visible = await filled.first().evaluate((el) => {
       const r = el.getBoundingClientRect();
@@ -37,9 +37,10 @@ test.describe('Discesa dei pezzi (browser)', () => {
     });
     expect(visible).toEqual({ uncovered: true, gradient: true });
 
-    // l'anteprima mostra il prossimo pezzo
+    // l'anteprima mostra il prossimo pezzo (su mobile è nascosta, vedi mobile.spec.js)
     const preview = page.getByRole('grid', { name: 'Prossimo pezzo' });
-    await expect(preview.locator('[data-filled="true"]')).toHaveCount(4);
+    if (testInfo.project.name === 'mobile') await expect(preview).toBeHidden();
+    else await expect(preview.locator('[data-filled="true"]')).toHaveCount(4);
   });
 
   test('in pausa il pezzo è fermo e i tasti sono ignorati', async ({ page }) => {
@@ -48,7 +49,7 @@ test.describe('Discesa dei pezzi (browser)', () => {
     await page.getByRole('button', { name: 'Avvia' }).click();
     await expect(board.locator('[data-filled="true"]')).toHaveCount(4, { timeout: 5000 });
 
-    await page.getByRole('button', { name: 'Pausa' }).click();
+    await page.getByRole('button', { name: 'Pausa', exact: true }).click();
     const snap = () => board.innerHTML();
     const paused = await snap();
     await page.keyboard.press('ArrowLeft');

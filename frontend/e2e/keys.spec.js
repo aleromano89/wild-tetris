@@ -55,8 +55,8 @@ test.describe('Comandi da tastiera (browser)', () => {
 
   test('Spazio con il focus su «Riprendi» fa cadere il pezzo senza cliccare il pulsante', async ({ page }) => {
     await startWithVisibleI(page);
-    await page.getByRole('button', { name: 'Pausa' }).click();
-    await page.getByRole('button', { name: 'Riprendi' }).click(); // il focus resta sul pulsante
+    await page.getByRole('button', { name: 'Pausa', exact: true }).click();
+    await page.getByRole('button', { name: 'Riprendi', exact: true }).click(); // il focus resta sul pulsante
 
     await page.keyboard.press('Space');
     await expect(page.getByText('In pausa')).toHaveCount(0);

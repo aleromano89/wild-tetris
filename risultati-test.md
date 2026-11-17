@@ -1,6 +1,29 @@
 # Risultati test
 
-Registro delle esecuzioni dei test. Direttive principali: [CLAUDE.md](CLAUDE.md).
+Registro delle esecuzioni dei test.
+
+## 2026-11-17 — Frontend mobile: Avvia, Pausa, anteprima e tastiera
+
+### Unit / componenti (Vitest) — `docker compose exec node npm test`
+
+| File | Test | Esito |
+|------|------|-------|
+| test esistenti | 140 | ✅ |
+| `src/components/App.mobile.test.jsx` | 3 | ✅ (nuovo) |
+| `src/components/SaveScoreForm.test.jsx` (tastiera virtuale) | 3 | ✅ (nuovi) |
+| **Totale** | **149** | **149 passati** |
+
+Ciclo TDD: nuovi test eseguiti in rosso (5 falliti), poi verdi. Prima della modifica 4 test i18n erano già rossi (chiavi `app.config.*` mancanti in `es.json`): corretti.
+
+### Browser (Playwright) — `make e2e`
+
+| File | Desktop | Mobile |
+|------|---------|--------|
+| `e2e/mobile.spec.js` (8 test nuovi su iPhone SE e iPhone 15 Pro) | ✅ | ✅ |
+| altri file `e2e/*.spec.js` (adattati: anteprima nascosta su mobile, «Pausa» esatto) | ✅ | ✅ |
+| **Totale** | | **59 passati**, 33 saltati (2 esecuzioni consecutive) |
+
+Ciclo TDD: nuovi test e2e eseguiti in rosso (13 falliti). Il test con tastiera simulata (altezza viewport −260px) inizialmente passava con la griglia collassata e la pulsantiera sopra il modulo: reso più severo (campo e pulsante non coperti ai bordi, ≥44px, modulo ≥240px, celle ≥12px), visto in rosso, poi corretto il CSS.
 
 ## 2026-11-16 — Testi dell'interfaccia con react-intl
 

@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 // Fase 1.2.4: fine partita nel browser. Orologio simulato e Math.random fisso per un esito deterministico.
-test('fine partita: messaggio con punteggio, dentro la griglia, e nuova partita', async ({ page }) => {
+test('fine partita: messaggio con punteggio, dentro la griglia, e nuova partita', async ({ page }, testInfo) => {
   await page.clock.install();
   await page.addInitScript(() => {
     Math.random = () => 0.999;
@@ -22,8 +22,18 @@ test('fine partita: messaggio con punteggio, dentro la griglia, e nuova partita'
   await overlay.scrollIntoViewIfNeeded();
   const boardBox = await page.getByRole('grid', { name: 'Campo di gioco' }).boundingBox();
   const box = await overlay.boundingBox();
-  expect(box.x).toBeGreaterThanOrEqual(boardBox.x);
-  expect(box.x + box.width).toBeLessThanOrEqual(boardBox.x + boardBox.width);
+  if (testInfo.project.name === 'mobile') {
+    // su mobile il riquadro ha una larghezza propria (la griglia può essere stretta):
+    // centrato sulla griglia e dentro lo schermo
+    const overBox = await page.locator('.overlay--over').boundingBox();
+    const centre = (b) => b.x + b.width / 2;
+    expect(Math.abs(centre(overBox) - centre(boardBox))).toBeLessThan(2);
+    expect(overBox.x).toBeGreaterThanOrEqual(0);
+    expect(overBox.x + overBox.width).toBeLessThanOrEqual(page.viewportSize().width);
+  } else {
+    expect(box.x).toBeGreaterThanOrEqual(boardBox.x);
+    expect(box.x + box.width).toBeLessThanOrEqual(boardBox.x + boardBox.width);
+  }
   // ed è in primo piano (non coperto). L'overlay ha pointer-events: none, che elementFromPoint
   // ignora sempre: li riattivo solo per la verifica.
   const onTop = await overlay.evaluate((el) => {
